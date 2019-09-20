@@ -5,7 +5,6 @@ import MetadataContainer from '../containers/MetadataContainer'
 import BodyContainer from '../containers/BodyContainer'
 import SchemaContainer from '../containers/SchemaContainer'
 import ParseError from './ParseError'
-import { CSSTransition } from 'react-transition-group'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 
 import { getComponentDisplayProps, StatusDot } from './ComponentList'
@@ -40,59 +39,33 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
         </div>
       </div>
       <div className='component-content transition-group'>
-        <CSSTransition
-          in={!!componentStatus && hasParseError}
-          classNames='fade'
-          component='div'
-          timeout={300}
-          mountOnEnter
-          unmountOnExit
-          appear={true}
-        >
+        {
+          !!componentStatus && hasParseError &&
           <div id='transition-wrap'>
             <ParseError fsiPath={fsiPath || ''} filename={componentStatus && componentStatus.filepath} component={component} />
           </div>
-        </CSSTransition>
-        <CSSTransition
-          in={(component === 'meta') && !isLoading && !hasParseError}
-          classNames='fade'
-          component='div'
-          timeout={300}
-          mountOnEnter
-          unmountOnExit
-          appear={true}
-        >
+        }
+        {
+          (component === 'meta') && !isLoading && !hasParseError &&
           <div id='transition-wrap'>
             <MetadataContainer history={history}/>
           </div>
-        </CSSTransition>
-        <CSSTransition
-          in={component === 'body' && !hasParseError}
-          classNames='fade'
-          component='div'
-          timeout={300}
-          mountOnEnter
-          unmountOnExit
-          appear={true}
-        >
+        }
+        {
+          component === 'body' && !hasParseError &&
           <div id='transition-wrap'>
             <BodyContainer history={history}/>
           </div>
-        </CSSTransition>
-        <CSSTransition
-          in={component === 'schema' && !isLoading && !hasParseError}
-          classNames='fade'
-          component='div'
-          timeout={300}
-          mountOnEnter
-          unmountOnExit
-          appear={true}
-        >
+        }
+        {
+          component === 'schema' && !isLoading && !hasParseError &&
           <div id='transition-wrap'>
             <SchemaContainer history={history}/>
           </div>
-        </CSSTransition>
-        <SpinnerWithIcon loading={isLoading}/>
+        }
+        {
+          isLoading && <SpinnerWithIcon loading={true}/>
+        }
       </div>
     </div>
   )

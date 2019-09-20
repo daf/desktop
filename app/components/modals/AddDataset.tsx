@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { ApiAction } from '../../store/api'
-import { CSSTransition } from 'react-transition-group'
 import Modal from './Modal'
 import TextInput from '../form/TextInput'
 import Error from './Error'
@@ -132,17 +131,7 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onS
   }
 
   const renderAddByName = () => {
-    return (
-      <CSSTransition
-        in={ activeTab === TabTypes.ByName }
-        classNames="fade"
-        component="div"
-        timeout={300}
-        unmountOnExit
-      >
-        <AddByName datasetName={datasetName} onChange={handleChanges}/>
-      </CSSTransition>
-    )
+    return activeTab === TabTypes.ByName && <AddByName datasetName={datasetName} onChange={handleChanges}/>
   }
 
   // restore when you can add by URL
@@ -181,14 +170,7 @@ const AddDataset: React.FunctionComponent<AddDatasetProps> = ({ onDismissed, onS
           {/* restore when you can add by URL */}
           {/* {renderAddByUrl()} */}
         </div>
-        <CSSTransition
-          in={!!error}
-          timeout={300}
-          classNames='slide'
-          component='div'
-        >
-          <div id='error'><Error text={error} /></div>
-        </CSSTransition>
+        {!!error && <div id='error'><Error text={error} /></div>}
       </div>
       <Buttons
         cancelText='cancel'

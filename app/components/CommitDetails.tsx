@@ -3,7 +3,6 @@ import moment from 'moment'
 import { Action } from 'redux'
 import ComponentList from '../components/ComponentList'
 import DatasetComponent from './DatasetComponent'
-import { CSSTransition } from 'react-transition-group'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 import { ApiAction } from '../store/api'
 import { Commit } from '../models/dataset'
@@ -81,50 +80,48 @@ const CommitDetails: React.FunctionComponent<CommitDetailsProps> = ({
   }, [commitDetails.isLoading])
 
   const { status } = commitDetails
-  return (
-    <div id='commit-details' className='dataset-content transition-group'>
-      <CSSTransition
-        in={!isLogError && !loading}
-        classNames='fade'
-        timeout={300}
-        unmountOnExit
-      >
-        <div id='transition-wrap'>
-          <div className='commit-details-header text-column'>
-            <div className='text'>{commit && commit.title}</div>
-            <div className='subtext'>
-              {/* <img className= 'user-image' src = {'https://avatars0.githubusercontent.com/u/1154390?s=60&v=4'} /> */}
-              <div className='time-message'>
-                {commit && moment(commit.timestamp).fromNow()}
-              </div>
-            </div>
-          </div>
-          <div className='columns'>
-            <div
-              className='commit-details-sidebar sidebar'
-            >
-              <ComponentList
-                datasetSelected={peername !== '' && name !== ''}
-                status={status}
-                selectedComponent={selectedComponent}
-                selectionType={'commitComponent' as ComponentType}
-                onComponentClick={setSelectedListItem}
-                fsiPath={'isLinked'}
-              />
-            </div>
-            <div className='content-wrapper'>
-              <DatasetComponent isLoading={loading} component={selectedComponent} componentStatus={status[selectedComponent]} history />
-            </div>
-          </div>
-        </div>
-      </CSSTransition>
-      <SpinnerWithIcon loading={loading} />
+
+  if (loading) return <SpinnerWithIcon loading={loading} />
+  if (isLogError && !loading) {
+    return (
       <SpinnerWithIcon loading={isLogError && !loading} title='Oh no!' spinner={false}>
         <p>Oops, you don&apos;t have this version of the dataset.</p>
         <p>Try adding it by using the terminal and the Qri command line tool that can be used when this desktop app is running!</p>
         <p>Open up the terminal and paste this command:</p>
         <div className='terminal'>{`qri add ${peername}/${name}/at${selectedCommitPath}`}</div>
       </SpinnerWithIcon>
+    )
+  }
+  return (
+    <div id='commit-details' className='dataset-content transition-group'>
+      <div id='transition-wrap'>
+        <div className='commit-details-header text-column'>
+          <div className='text'>{commit && commit.title}</div>
+          <div className='subtext'>
+            {/* <img className= 'user-image' src = {'https://avatars0.githubusercontent.com/u/1154390?s=60&v=4'} /> */}
+            <div className='time-message'>
+              {commit && moment(commit.timestamp).fromNow()}
+            </div>
+          </div>
+        </div>
+        <div className='columns'>
+          <div
+            className='commit-details-sidebar sidebar'
+          >
+            <ComponentList
+              datasetSelected={peername !== '' && name !== ''}
+              status={status}
+              selectedComponent={selectedComponent}
+              selectionType={'commitComponent' as ComponentType}
+              onComponentClick={setSelectedListItem}
+              fsiPath={'isLinked'}
+            />
+          </div>
+          <div className='content-wrapper'>
+            <DatasetComponent isLoading={loading} component={selectedComponent} componentStatus={status[selectedComponent]} history />
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

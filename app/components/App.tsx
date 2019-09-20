@@ -1,7 +1,6 @@
 import { hot } from 'react-hot-loader/root'
 import * as React from 'react'
 import { Action } from 'redux'
-import { CSSTransition } from 'react-transition-group'
 import { HashRouter as Router } from 'react-router-dom'
 import { ipcRenderer } from 'electron'
 
@@ -189,47 +188,15 @@ class App extends React.Component<AppProps, AppState> {
       }
     }
 
-    return (
-      <div >
-        <CSSTransition
-          in={modal.type !== ModalType.NoModal}
-          classNames='fade'
-          component='div'
-          timeout={300}
-          unmountOnExit
-        >
-          {modalComponent}
-        </CSSTransition>
-      </div>
-    )
+    return (modal.type !== ModalType.NoModal) ? modalComponent : null
   }
 
   private renderAppLoading () {
-    return (
-      <CSSTransition
-        in={this.props.loading}
-        classNames="fade"
-        component="div"
-        timeout={1000}
-        unmountOnExit
-      >
-        <AppLoading />
-      </CSSTransition>
-    )
+    return this.props.loading && <AppLoading />
   }
 
   private renderAppError () {
-    return (
-      <CSSTransition
-        in={this.props.apiConnection === -1}
-        classNames="fade"
-        component="div"
-        timeout={1000}
-        unmountOnExit
-      >
-        <AppError />
-      </CSSTransition>
-    )
+    return this.props.apiConnection === -1 && <AppError />
   }
 
   render () {

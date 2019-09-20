@@ -3,7 +3,6 @@ import { Action } from 'redux'
 import classNames from 'classnames'
 import ReactTooltip from 'react-tooltip'
 import { remote, ipcRenderer, shell, clipboard } from 'electron'
-import { CSSTransition } from 'react-transition-group'
 import { faDiscord } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFile, faFolderOpen } from '@fortawesome/free-regular-svg-icons'
@@ -352,51 +351,26 @@ export default class Dataset extends React.Component<DatasetProps> {
           </Resizable>
           <div className='content-wrapper'>
             <div className='transition-group' >
-              <CSSTransition
-                in={!hasDatasets}
-                classNames='fade'
-                timeout={300}
-                mountOnEnter
-                unmountOnExit
-              >
+              {
+                !hasDatasets &&
                 <NoDatasets setModal={setModal} />
-              </CSSTransition>
-              <CSSTransition
-                in={!datasetSelected && hasDatasets}
-                classNames='fade'
-                timeout={300}
-                mountOnEnter
-                unmountOnExit
-              >
+              }
+              {
+                !datasetSelected && hasDatasets &&
                 <NoDatasetSelected toggleDatasetList={toggleDatasetList}/>
-              </CSSTransition>
-              <CSSTransition
-                in={datasetSelected && (activeTab === 'status') && !isLinked && !workingDataset.isLoading}
-                classNames='fade'
-                timeout={300}
-                mountOnEnter
-                unmountOnExit
-              >
+              }
+              {
+                datasetSelected && (activeTab === 'status') && !isLinked && !workingDataset.isLoading &&
                 <UnlinkedDataset setModal={setModal}/>
-              </CSSTransition>
-              <CSSTransition
-                in={datasetSelected && activeTab === 'status' && isLinked}
-                classNames='fade'
-                timeout={300}
-                mountOnEnter
-                unmountOnExit
-              >
+              }
+              {
+                datasetSelected && activeTab === 'status' && isLinked &&
                 <DatasetComponent component={selectedComponent} componentStatus={status[selectedComponent]} isLoading={workingDataset.isLoading} fsiPath={this.props.workingDataset.fsiPath}/>
-              </CSSTransition>
-              <CSSTransition
-                in={datasetSelected && activeTab === 'history'}
-                classNames='fade'
-                timeout={300}
-                mountOnEnter
-                unmountOnExit
-              >
+              }
+              {
+                datasetSelected && activeTab === 'history' &&
                 <CommitDetailsContainer setSelectedListItem={setSelectedListItem}/>
-              </CSSTransition>
+              }
             </div>
           </div>
         </div>

@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { CSSTransition } from 'react-transition-group'
 import ReactJson from 'react-json-view'
 
 import Toast, { ToastTypes } from './chrome/Toast'
@@ -33,34 +32,33 @@ const Body: React.FunctionComponent<BodyProps> = ({ value, pageInfo, headers, st
     onFetch(pageInfo.page + 1, pageInfo.pageSize)
   }
 
+  if (isLoadingFirstPage) {
+    return (
+      <div id='transition-wrap'>
+        <SpinnerWithIcon loading={true}/>
+      </div>
+    )
+  }
+
   return (
-    <div className='transition-group'>
-      <CSSTransition
-        in={!isLoadingFirstPage}
-        timeout={300}
-        classNames='fade'
-      >
-        <div id='transition-wrap'>
-          {shouldDisplayTable(value, structure)
-            ? <HandsonTable
-              headers={headers}
-              body={value}
-              onScrollToBottom={handleScrollToBottom}
-            />
-            : <ReactJson
-              name={null}
-              src={value}
-              displayDataTypes={false}
-            />
-          }
-          <Toast
-            show={pageInfo.isFetching && pageInfo.page > 0}
-            type={ToastTypes.message}
-            text='Loading more rows...'
-          />
-        </div>
-      </CSSTransition>
-      <SpinnerWithIcon loading={isLoadingFirstPage}/>
+    <div id='transition-wrap'>
+      {shouldDisplayTable(value, structure)
+        ? <HandsonTable
+          headers={headers}
+          body={value}
+          onScrollToBottom={handleScrollToBottom}
+        />
+        : <ReactJson
+          name={null}
+          src={value}
+          displayDataTypes={false}
+        />
+      }
+      <Toast
+        show={pageInfo.isFetching && pageInfo.page > 0}
+        type={ToastTypes.message}
+        text='Loading more rows...'
+      />
     </div>
   )
 }

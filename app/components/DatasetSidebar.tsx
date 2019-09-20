@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { Action } from 'redux'
 import moment from 'moment'
-import { CSSTransition } from 'react-transition-group'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
@@ -122,24 +121,12 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
         </div>
       </div>
       <div id='content' className='transition-group'>
-        <CSSTransition
-          classNames='fade'
-          in={(!statusLoaded && activeTab === 'status') || (!historyLoaded && activeTab === 'history')}
-          component='div'
-          timeout={300}
-          mountOnEnter
-          unmountOnExit
-        >
+        {
+          ((!statusLoaded && activeTab === 'status') || (!historyLoaded && activeTab === 'history')) &&
           <div className='spinner'><Spinner /></div>
-        </CSSTransition>
-        <CSSTransition
-          in={statusLoaded && activeTab === 'status'}
-          classNames='fade'
-          component='div'
-          timeout={300}
-          mountOnEnter
-          unmountOnExit
-        >
+        }
+        {
+          statusLoaded && activeTab === 'status' &&
           <div id='status-content' className='sidebar-content'>
             <ComponentList
               datasetSelected={datasetSelected}
@@ -151,20 +138,13 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
               discardChanges={discardChanges}
             />
           </div>
-        </CSSTransition>
-        <CSSTransition
-          in={historyLoaded && activeTab === 'history'}
-          classNames='fade'
-          component='div'
-          timeout={300}
-          mountOnEnter
-          unmountOnExit
-        >
+        }
+        {
+          historyLoaded && activeTab === 'history' &&
           <div
             id='history-content'
             className='sidebar-content'
             onScroll={(e) => handleHistoryScroll(e)}
-            hidden = {activeTab === 'status'}
           >
             {
               history.value.map(({ path, timestamp, title }) => {
@@ -182,7 +162,7 @@ const DatasetSidebar: React.FunctionComponent<DatasetSidebarProps> = (props) => 
               })
             }
           </div>
-        </CSSTransition>
+        }
         {
           !hideCommitNudge && bodyLoaded && statusLoaded && historyLoaded && noHistory && datasetSelected && (
             <div className='commit-nudge'>
