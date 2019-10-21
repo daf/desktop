@@ -66,7 +66,7 @@ export interface UI {
   exportPath: string
 }
 
-export type SelectedComponent = 'meta' | 'body' | 'structure' | ''
+export type SelectedComponent = 'readme' | 'meta' | 'body' | 'structure' | ''
 
 // currently selected dataset, tab, dataset component, commit, etc
 export interface Selections {
