@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { CSSTransition } from 'react-transition-group'
-import ReactJson from 'react-json-view'
 
 import Toast, { ToastTypes } from './chrome/Toast'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
@@ -8,6 +7,9 @@ import HandsonTable from './HandsonTable'
 import { ApiAction } from '../store/api'
 
 import { PageInfo, WorkingDataset } from '../models/store'
+import { VariableSizeList as List } from 'react-window'
+
+require('codemirror/mode/javascript/javascript')
 
 export interface BodyProps {
   workingDataset: WorkingDataset
@@ -20,6 +22,8 @@ export interface BodyProps {
   format: string
   fetchBody: (page?: number, pageSize?: number) => Promise<ApiAction>
   fetchCommitBody: (page?: number, pageSize?: number) => Promise<ApiAction>
+  height: number | null
+  width: number | null
 }
 
 function shouldDisplayTable (value: any[] | Object, format: string) {
@@ -41,6 +45,22 @@ const extractColumnHeaders = (workingDataset: WorkingDataset): undefined | objec
   return schema && schema.items && schema.items.items.map((d: { title: string }): string => d.title)
 }
 
+interface ItemProps {
+  index: number
+  style: object
+  data: any
+}
+
+const Item: React.FunctionComponent<ItemProps> = (props: ItemProps) => {
+  const { index, style, data } = props
+  const item = data[index]
+  return (
+    <pre style={style}>
+      {JSON.stringify(item, null, 2)}
+    </pre>
+  )
+}
+
 const Body: React.FunctionComponent<BodyProps> = (props) => {
   const {
     value,
@@ -49,8 +69,12 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
     history,
     fetchBody,
     format,
-    fetchCommitBody
+    fetchCommitBody,
+    height,
+    width
   } = props
+
+  console.log('HERE', height, width)
   const isLoadingFirstPage = (pageInfo.page === 1 && pageInfo.isFetching)
 
   const handleScrollToBottom = () => {
@@ -74,11 +98,25 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
               body={value}
               onScrollToBottom={handleScrollToBottom}
             />
-            : <ReactJson
-              name={null}
-              src={value}
-              displayDataTypes={false}
-            />
+            : (
+              <List
+                height={height || 0}
+                itemCount={value.length}
+                itemData={value}
+                itemSize={(index) => {
+                  const lineHeight = 22
+                  const item = value[index]
+                  const text = JSON.stringify(item, null, 2)
+                  const match = text.match(/[^\n]*\n[^\n]*/gi)
+                  const lineCount = match ? match.length + 1 : 1
+                  return lineCount * lineHeight
+                }}
+                width={width || 0}
+              >
+                {Item}
+              </List>
+            )
+
           }
           <Toast
             show={pageInfo.isFetching && pageInfo.page > 0}

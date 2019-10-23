@@ -5,7 +5,12 @@ import Store from '../models/store'
 import { fetchBody, fetchCommitBody } from '../actions/api'
 import path from 'path'
 
-const mapStateToProps = (state: Store) => {
+interface BodyContainerProps {
+  height: number | null
+  width: number | null
+}
+
+const mapStateToProps = (state: Store, ownProps: BodyContainerProps) => {
   const { workingDataset, commitDetails, selections } = state
   const history = selections.activeTab === 'history'
   const dataset = history ? commitDetails : workingDataset
@@ -22,7 +27,7 @@ const mapStateToProps = (state: Store) => {
   const { peername, name, commit } = selections
   const structure = dataset.components.structure.value
   // get data for the currently selected component
-  return {
+  return Object.assign({
     peername,
     path: commit,
     name,
@@ -32,7 +37,7 @@ const mapStateToProps = (state: Store) => {
     format,
     history,
     workingDataset
-  }
+  }, ownProps)
 }
 
 const mergeProps = (props: any, actions: any): BodyProps => {

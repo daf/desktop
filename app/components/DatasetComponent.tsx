@@ -28,8 +28,10 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
   const component = selectedComponent || 'meta'
   const { displayName, icon, tooltip } = getComponentDisplayProps(component)
 
+  const divRef = React.useRef<HTMLDivElement>(null)
+
   return (
-    <div className='component-container'>
+    <div ref={divRef} className='component-container'>
       <div className='component-header'>
         <div className='component-display-name-container'>
           <div className='component-display-name' data-tip={tooltip}>
@@ -81,7 +83,10 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           appear={true}
         >
           <div className='transition-wrap'>
-            <BodyContainer/>
+            <BodyContainer
+              height={divRef.current && divRef.current.clientHeight}
+              width={divRef.current && divRef.current.clientWidth}
+            />
           </div>
         </CSSTransition>
         <CSSTransition
