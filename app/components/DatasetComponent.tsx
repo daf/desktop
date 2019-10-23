@@ -6,7 +6,7 @@ import MetadataEditorContainer from '../containers/MetadataEditorContainer'
 import BodyContainer from '../containers/BodyContainer'
 import StructureContainer from '../containers/StructureContainer'
 import ParseError from './ParseError'
-import Readme from './Readme'
+import ReadmeContainer from '../containers/ReadmeContainer'
 import { CSSTransition } from 'react-transition-group'
 import SpinnerWithIcon from './chrome/SpinnerWithIcon'
 
@@ -65,7 +65,7 @@ const DatasetComponent: React.FunctionComponent<DatasetComponentProps> = (props:
           appear={true}
         >
           <div className='transition-wrap'>
-            <Readme />
+            <ReadmeContainer />
           </div>
         </CSSTransition>
         <CSSTransition

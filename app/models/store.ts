@@ -132,6 +132,9 @@ export interface CommitDetails {
   status: DatasetStatus
   isLoading: boolean
   components: {
+    readme: {
+      value: string | undefined
+    }
     body: {
       value: any[] | undefined
       pageInfo: PageInfo
