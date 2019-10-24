@@ -26,10 +26,6 @@ export interface BodyProps {
   width: number | null
 }
 
-function shouldDisplayTable (value: any[] | Object, format: string) {
-  return value && (format === 'csv' || format === 'xlsx')
-}
-
 const extractColumnHeaders = (workingDataset: WorkingDataset): undefined | object => {
   const structure = workingDataset.components.structure.value
   const schema = structure.schema
@@ -82,7 +78,45 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
     onFetch(pageInfo.page + 1, pageInfo.pageSize)
   }
 
-  const headers = extractColumnHeaders(workingDataset)
+  // tabular body
+  // array body
+  // other body
+  let body = <div />
+
+  console.log('BODY', value)
+
+  if (value && (format === 'csv' || format === 'xlsx')) {
+    const headers = extractColumnHeaders(workingDataset)
+
+    body = (
+      <HandsonTable
+        headers={headers}
+        body={value}
+        onScrollToBottom={handleScrollToBottom}
+      />
+    )
+  } else if (value.length) {
+    body = (
+      <List
+        height={height || 0}
+        itemCount={value.length}
+        itemData={value}
+        itemSize={(index) => {
+          const lineHeight = 22
+          const item = value[index]
+          const text = JSON.stringify(item, null, 2)
+          const match = text.match(/[^\n]*\n[^\n]*/gi)
+          const lineCount = match ? match.length + 1 : 1
+          return lineCount * lineHeight
+        }}
+        width={width || 0}
+      >
+        {Item}
+      </List>
+    )
+  } else {
+    body = <div>{JSON.stringify(value, null, 2)}</div>
+  }
 
   return (
     <div className='transition-group'>
@@ -92,32 +126,7 @@ const Body: React.FunctionComponent<BodyProps> = (props) => {
         classNames='fade'
       >
         <div id='transition-wrap'>
-          {shouldDisplayTable(value, format)
-            ? <HandsonTable
-              headers={headers}
-              body={value}
-              onScrollToBottom={handleScrollToBottom}
-            />
-            : (
-              <List
-                height={height || 0}
-                itemCount={value.length}
-                itemData={value}
-                itemSize={(index) => {
-                  const lineHeight = 22
-                  const item = value[index]
-                  const text = JSON.stringify(item, null, 2)
-                  const match = text.match(/[^\n]*\n[^\n]*/gi)
-                  const lineCount = match ? match.length + 1 : 1
-                  return lineCount * lineHeight
-                }}
-                width={width || 0}
-              >
-                {Item}
-              </List>
-            )
-
-          }
+          {body}
           <Toast
             show={pageInfo.isFetching && pageInfo.page > 0}
             type={ToastTypes.message}
